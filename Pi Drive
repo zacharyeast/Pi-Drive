@@ -1,0 +1,74 @@
+import RPi.GPIO as GPIO
+import time
+from pygame import mixer
+from time import sleep
+import math
+import pygame
+GPIO.setwarnings(False)
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(7,GPIO.OUT)
+GPIO.setup(11,GPIO.OUT)
+GPIO.setup(13,GPIO.OUT)
+GPIO.setup(15,GPIO.OUT)
+GPIO.setup(29,GPIO.OUT)
+GPIO.output(7,False)
+GPIO.output(11,False)
+GPIO.output(13,False)
+GPIO.output(15,False)
+
+# Intialize the pygame
+pygame.init()
+screen = pygame.display.set_mode((100, 100))
+
+def key_up():
+    GPIO.output(7,False)
+    GPIO.output(11,True)
+    GPIO.output(13,False)
+    GPIO.output(15,True)
+def key_Release():
+    GPIO.output(7,False)
+    GPIO.output(11,False)
+    GPIO.output(13,False)
+    GPIO.output(15,False)
+def key_left():
+    GPIO.output(7,True)
+    GPIO.output(11,False)
+    GPIO.output(13,False)
+    GPIO.output(15,True)
+def key_right():
+    GPIO.output(7,False)
+    GPIO.output(11,True)
+    GPIO.output(13,True)
+    GPIO.output(15,False)
+def key_down():
+    GPIO.output(7,True)
+    GPIO.output(11,False)
+    GPIO.output(13,True)
+    GPIO.output(15,False)
+# Game Loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                key_up()
+            if event.key == pygame.K_DOWN:
+                key_down()
+            if event.key == pygame.K_LEFT:
+                key_left()
+
+            if event.key == pygame.K_RIGHT:
+                key_right()
+                
+        if event.type == pygame.KEYUP:
+           if event.key == pygame.K_UP:
+               key_Release()
+           if event.key == pygame.K_LEFT:
+               key_Release()
+           if event.key == pygame.K_RIGHT:
+               key_Release()
+           if event.key == pygame.K_DOWN:
+               key_Release()
