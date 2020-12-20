@@ -1,0 +1,112 @@
+import pygame
+import RPi.GPIO as GPIO
+import time
+from pygame import mixer
+from time import sleep
+import sys
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(7,GPIO.OUT)
+GPIO.setup(11,GPIO.OUT)
+GPIO.setup(13,GPIO.OUT)
+GPIO.setup(15,GPIO.OUT)
+GPIO.setup(19,GPIO.OUT)
+GPIO.setup(21,GPIO.OUT)
+GPIO.output(7,False)
+GPIO.output(11,False)
+GPIO.output(13,False)
+GPIO.output(15,False)
+GPIO.output(19,True)
+GPIO.output(21,True)
+def stop():
+    GPIO.output(7,0)
+    GPIO.output(11,0)
+    GPIO.output(13,0)
+    GPIO.output(15,0)
+def key_up():
+    GPIO.output(7,False)
+    GPIO.output(11,True)
+    GPIO.output(13,False)
+    GPIO.output(15,True)
+def key_down():
+    GPIO.output(7,True)
+    GPIO.output(11,False)
+    GPIO.output(13,True)
+    GPIO.output(15,False)
+def key_left():
+    GPIO.output(7,True)
+    GPIO.output(11,False)
+    GPIO.output(13,False)
+    GPIO.output(15,True)
+def key_right():
+    GPIO.output(7,False)
+    GPIO.output(11,True)
+    GPIO.output(13,True)
+    GPIO.output(15,False)
+GPIO.setup(18,GPIO.OUT)
+servo1 = GPIO.PWM(18,50)
+servo1.start(0)
+def key_p():
+    servo1.ChangeDutyCycle(11)
+def recenter():
+    servo1.ChangeDutyCycle(7.5)
+click_rect  = pygame.Rect(250, 0, 60, 60)
+click_rect2  = pygame.Rect(310, 60, 60, 60)
+click_rect3  = pygame.Rect(190, 60, 60, 60)
+click_rect4  = pygame.Rect(250, 120, 60, 60)
+click_rectp  = pygame.Rect(0, 0, 60, 60)
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((500, 800))
+    pygame.draw.rect(screen, (0, 128, 255), pygame.Rect(250, 0, 60, 60))
+    pygame.draw.rect(screen, (128, 0, 128), pygame.Rect(310, 60, 60, 60))
+    pygame.draw.rect(screen, (128, 128, 255), pygame.Rect(190, 60, 60, 60))
+    pygame.draw.rect(screen, (128, 128, 0), pygame.Rect(250, 120, 60, 60))
+    pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(0, 0, 60, 60)) 
+    pygame.display.flip()
+    while True:      
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()          
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_position = pygame.mouse.get_pos()
+                if ( click_rect.collidepoint( mouse_position ) ):
+                    if event.button == 1: 
+                        key_up()                        
+                if ( click_rect2.collidepoint( mouse_position ) ):
+                    if event.button == 1:
+                        key_right()                        
+                if ( click_rect3.collidepoint( mouse_position ) ):
+                    if event.button == 1: 
+                        key_left()
+                if ( click_rect4.collidepoint( mouse_position ) ):
+                    if event.button == 1: 
+                        key_down()
+                if ( click_rectp.collidepoint( mouse_position ) ):
+                    if event.button == 1: 
+                        key_p()                        
+                if ( click_rectp.collidepoint( mouse_position ) ):
+                    if event.button == 3: 
+                        key_p()                        
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    if ( click_rect.collidepoint( mouse_position ) ):
+                        stop()                    
+                if event.button == 1:
+                    if ( click_rectp.collidepoint( mouse_position ) ):
+                        recenter()                
+                if event.button == 1:
+                    if ( click_rect2.collidepoint( mouse_position ) ):
+                        stop()
+                if event.button == 1:
+                    if ( click_rect3.collidepoint( mouse_position ) ):
+                        stop()                    
+                if event.button == 1:
+                    if ( click_rect4.collidepoint( mouse_position ) ):
+                        stop()                          
+                elif event.button == 3:
+                    stop()
+main()
